@@ -34,7 +34,7 @@ Resources:
             Resource: !Sub "${EcoDanvaWebsiteBucket.Arn}/*"
 
   # Distribución CloudFront para el contenido de S3
- EcoDanvaCloudFrontDistribution:
+  EcoDanvaCloudFrontDistribution:
   Type: AWS::CloudFront::Distribution
   Properties:
     DistributionConfig:
