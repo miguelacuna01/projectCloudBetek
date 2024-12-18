@@ -57,6 +57,7 @@ Resources:
         CloudFrontDefaultCertificate: true
       PriceClass: PriceClass_100
 
+
 Outputs:
   S3BucketName:
     Description: Nombre del bucket S3 creado
