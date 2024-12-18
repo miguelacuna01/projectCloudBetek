@@ -1,26 +1,29 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation template para un bucket S3 y una distribución de CloudFront - EcoDanva Solutions
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: Nombre único para el bucket S3
+Description: CloudFormation template para EcoDanva Solutions - S3 y CloudFront.
 
 Resources:
-  # Bucket S3
-  S3Bucket:
+  # Bucket S3 para el sitio web estático
+  EcoDanvaWebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: eco-danva-solutions-bucket
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+        IgnorePublicAcls: false
 
-  # Bucket Policy para permitir acceso público a los objetos del bucket
-  S3BucketPolicy:
+  # Política del Bucket para acceso público
+  EcoDanvaBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref EcoDanvaWebsiteBucket
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -28,41 +31,44 @@ Resources:
             Effect: Allow
             Principal: "*"
             Action: "s3:GetObject"
-            Resource: !Sub "${S3Bucket.Arn}/*"
+            Resource: !Sub "${EcoDanvaWebsiteBucket.Arn}/*"
 
-  # Distribución de CloudFront
-  CloudFrontDistribution:
+  # Distribución CloudFront para el contenido de S3
+  EcoDanvaCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Enabled: true
+        DefaultRootObject: index.html
         Origins:
-          - DomainName: !GetAtt S3Bucket.DomainName
-            Id: S3Origin
-            S3OriginConfig:
-              OriginAccessIdentity: ""
+          - DomainName: !GetAtt EcoDanvaWebsiteBucket.WebsiteURL
+            Id: EcoDanvaS3Origin
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
         DefaultCacheBehavior:
-          TargetOriginId: S3Origin
+          TargetOriginId: EcoDanvaS3Origin
           ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods:
-            - GET
-            - HEAD
-          CachedMethods:
-            - GET
-            - HEAD
+          AllowedMethods: ["GET", "HEAD"]
+          CachedMethods: ["GET", "HEAD"]
           ForwardedValues:
             QueryString: false
             Cookies:
               Forward: none
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
-        DefaultRootObject: index.html
+        PriceClass: PriceClass_100
 
 Outputs:
   S3BucketName:
     Description: Nombre del bucket S3 creado
-    Value: !Ref BucketName
+    Value: !Ref EcoDanvaWebsiteBucket
+
+  S3WebsiteURL:
+    Description: URL del sitio web en el bucket S3
+    Value: !GetAtt EcoDanvaWebsiteBucket.WebsiteURL
 
   CloudFrontDomainName:
     Description: URL de la distribución de CloudFront
-    Value: !GetAtt CloudFrontDistribution.DomainName
+    Value: !GetAtt EcoDanvaCloudFrontDistribution.DomainName

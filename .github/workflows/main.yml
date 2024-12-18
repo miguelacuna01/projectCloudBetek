@@ -1,24 +1,39 @@
-name: CloudFormation Deployment
+name: CloudFormation Deployment for EcoDanva Solutions
+
 on:
   push:
-    paths:
-      - main
-  workflow_dispatch:  # ejecutarlo manualmente si es necesario
+    branches:
+      - main  # Se ejecutará cuando haya un push a la rama 'main'
+  workflow_dispatch:  # Permite ejecutar el workflow manualmente
+
 jobs:
   deploy:
+    name: Deploy CloudFormation Stack
     runs-on: ubuntu-latest
+
     steps:
+      # 1. Descargar el código del repositorio
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      # 2. Configurar credenciales de AWS
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}  # Ejemplo: us-east-2
+
+      # 3. Validar el template de CloudFormation
+      - name: Validate CloudFormation template
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://cf-resources-template.yaml
+
+      # 4. Desplegar el stack de CloudFormation
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
             --template-file cf-resources-template.yaml \
-            --stack-name ecoDanvaSolutionWebSite \
+            --stack-name ecoDanvaSolutions-stack \
             --capabilities CAPABILITY_NAMED_IAM
