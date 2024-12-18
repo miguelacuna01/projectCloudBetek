@@ -34,31 +34,28 @@ Resources:
             Resource: !Sub "${EcoDanvaWebsiteBucket.Arn}/*"
 
   # Distribución CloudFront para el contenido de S3
-  EcoDanvaCloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Enabled: true
-        DefaultRootObject: index.html
-        Origins:
-          - DomainName: !GetAtt EcoDanvaWebsiteBucket.WebsiteURL
-            Id: EcoDanvaS3Origin
-            CustomOriginConfig:
-              HTTPPort: 80
-              HTTPSPort: 443
-              OriginProtocolPolicy: http-only
-        DefaultCacheBehavior:
-          TargetOriginId: EcoDanvaS3Origin
-          ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods: ["GET", "HEAD"]
-          CachedMethods: ["GET", "HEAD"]
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
-        PriceClass: PriceClass_100
+ EcoDanvaCloudFrontDistribution:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DistributionConfig:
+      Enabled: true
+      DefaultRootObject: index.html
+      Origins:
+        - DomainName: !GetAtt EcoDanvaWebsiteBucket.RegionalDomainName
+          Id: EcoDanvaS3Origin
+          S3OriginConfig: {}
+      DefaultCacheBehavior:
+        TargetOriginId: EcoDanvaS3Origin
+        ViewerProtocolPolicy: redirect-to-https
+        AllowedMethods: ["GET", "HEAD"]
+        CachedMethods: ["GET", "HEAD"]
+        ForwardedValues:
+          QueryString: false
+          Cookies:
+            Forward: none
+      ViewerCertificate:
+        CloudFrontDefaultCertificate: true
+      PriceClass: PriceClass_100
 
 Outputs:
   S3BucketName:
