@@ -2,10 +2,9 @@ name: CloudFormation Deployment
 
 on:
   push:
-    paths:
+    branches:
       - main
-
-  workflow_dispatch:  # ejecutarlo manualmente si es necesario
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -27,5 +26,5 @@ jobs:
           aws cloudformation deploy \
             --template-file cf-resources-template.yaml \
             --stack-name EcoDanvaSolutionsStack \
-            --capabilities CAPABILITY_NAMED_IAM
+            --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides BucketName=eco-danva-solutions-website
