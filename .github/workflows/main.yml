@@ -1,0 +1,30 @@
+name: CloudFormation Deployment
+
+on:
+  push:
+    paths:
+      - main
+
+  workflow_dispatch:  # ejecutarlo manualmente si es necesario
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --template-file cf-resources-template.yaml \
+            --stack-name workshop-3-student-mateo-stack \
+            --capabilities CAPABILITY_NAMED_IAM
