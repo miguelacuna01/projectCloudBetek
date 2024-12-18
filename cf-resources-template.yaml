@@ -1,18 +1,22 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation template para un bucket S3 y una distribución de CloudFront
+Description: CloudFormation template para un bucket S3 y una distribución de CloudFront - EcoDanva Solutions
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Nombre único para el bucket S3
 
 Resources:
   # Bucket S3
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${AWS::StackName}-bucket"
-      AccessControl: PublicRead
+      BucketName: !Ref BucketName
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
 
-  # Bucket Policy para permitir acceso público a los objetos del bucket (opcional para un sitio web estático)
+  # Bucket Policy para permitir acceso público a los objetos del bucket
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -57,7 +61,7 @@ Resources:
 Outputs:
   S3BucketName:
     Description: Nombre del bucket S3 creado
-    Value: !Ref S3Bucket
+    Value: !Ref BucketName
 
   CloudFrontDomainName:
     Description: URL de la distribución de CloudFront
