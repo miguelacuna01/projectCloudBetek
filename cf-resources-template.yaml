@@ -41,12 +41,9 @@ Resources:
         Enabled: true
         DefaultRootObject: index.html
         Origins:
-          - DomainName: !GetAtt EcoDanvaWebsiteBucket.WebsiteURL
+          - DomainName: !GetAtt EcoDanvaWebsiteBucket.RegionalDomainName
             Id: EcoDanvaS3Origin
-            CustomOriginConfig:
-              HTTPPort: 80
-              HTTPSPort: 443
-              OriginProtocolPolicy: http-only
+            S3OriginConfig: {}
         DefaultCacheBehavior:
           TargetOriginId: EcoDanvaS3Origin
           ViewerProtocolPolicy: redirect-to-https
