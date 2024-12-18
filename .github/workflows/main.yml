@@ -26,5 +26,6 @@ jobs:
         run: |
           aws cloudformation deploy \
             --template-file cf-resources-template.yaml \
-            --stack-name workshop-3-student-mateo-stack \
+            --stack-name EcoDanvaSolutionsStack \
             --capabilities CAPABILITY_NAMED_IAM
+            --parameter-overrides BucketName=eco-danva-solutions-website
