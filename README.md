@@ -35,7 +35,8 @@ El proyecto está diseñado para ser escalable, seguro y fácil de mantener. Uti
 ├── cf-resources-template.yaml     # Template de CloudFormation para infraestructura
 ├── index.html                     # Página principal del sitio web
 ├── README.md                      # Documentación del proyecto
-
+```
+---
 ## **Requisitos Previos**
 ### **1. Cuenta de AWS**
 Una cuenta de AWS con los siguientes permisos:
