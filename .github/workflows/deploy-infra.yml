@@ -3,7 +3,7 @@ name: CloudFormation Deployment for EcoDanva Solutions
 on:
   push:
     branches:
-      - main  # Se ejecutará cuando haya un push a la rama 'main'
+      - infra.txt  # Se ejecutará cuando haya un push a la rama 'main'
   workflow_dispatch:  # Permite ejecutar el workflow manualmente
 
 jobs:
